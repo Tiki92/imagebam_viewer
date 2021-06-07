@@ -1,22 +1,21 @@
 import json
 import time
+from django.utils import timezone
 import requests as req
 from bs4 import BeautifulSoup
 from datetime import date, datetime
 from .models import Patterns, Links, Galleries, CurrentPattern
 
-time_now = time.strftime('%X %x %Z')
+time_now = timezone.localtime(timezone.now()).strftime("%d-%m-%Y %H:%M:%S")
 current_pattern = CurrentPattern.objects.get(id=1)
 pattern = Patterns.objects.get(id=current_pattern.current).pattern
 URL = "https://www.imagebam.com/view/{}".format(pattern)
 
 print("                   ")
 print("TIME {}".format(time_now))
-print("PATTERN {}".format(pattern))
 print("URL {}".format(URL))
 
 def link_checker():
-  print("Hello, World TO YOU!")
   resp = req.get(URL)
   status_req = resp.status_code
   print("REQUEST STATUS {}".format(status_req))
@@ -31,8 +30,6 @@ def link_checker():
     print("GETING IMAGE TAG")
     image_tag = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"})
     image_tag = str(image_tag)
-
-    print("IMAGE TAG {}".format(image_tag))
 
     if len(soup) > 0:
         soup = soup[0]
