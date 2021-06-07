@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'display',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +52,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'viewer.urls'
+
+CRONJOBS = [
+    ('* * * * *', 'display.cron.link_checker', '>> /tmp/check_link.log')
+]
+
+# CRONTAB_COMMAND_SUFFIX = '2>&1'
 
 TEMPLATES = [
     {

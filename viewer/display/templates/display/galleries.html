@@ -1,0 +1,23 @@
+{% load static %}
+<style>
+    img.main-image {
+        /* max-width: 10% !important; */
+        float: left;
+        width:  200px;
+        height: 200px;
+        object-fit: cover;
+    }
+
+</style>
+<link rel="stylesheet" type="text/css" href="{% static 'display/style.css' %}">
+
+{% if galleries_list %}
+    <ul>
+    {% for gallery in galleries_list %}
+    <!-- <li><a href={{ gallery.img_tag }}>{{ gallery.gallery_link }}</a></li> -->
+    <a href="{{ gallery.gallery_link }}">{{ gallery.img_tag |safe }}</a>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
