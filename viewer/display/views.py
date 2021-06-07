@@ -27,9 +27,18 @@ def images(request):
     # return HttpResponse(template.render(context, request))
 
 def galleries(request):
+    # galleries_list = Galleries.objects.order_by('-checked_date')
+    # template = loader.get_template('display/galleries.html')
+    # context = {
+    #     'galleries_list': galleries_list,
+    # }
+    # return HttpResponse(template.render(context, request))
+
     galleries_list = Galleries.objects.order_by('-checked_date')
-    template = loader.get_template('display/galleries.html')
-    context = {
-        'galleries_list': galleries_list,
-    }
-    return HttpResponse(template.render(context, request))
+    
+
+    paginator = Paginator(galleries_list, 30)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'display/galleries.html', {'page_obj': page_obj})

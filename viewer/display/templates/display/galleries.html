@@ -3,21 +3,50 @@
     img.main-image {
         /* max-width: 10% !important; */
         float: left;
-        width:  200px;
+        width: 300px;
         height: 200px;
         object-fit: cover;
     }
 
+    #inner1 {
+        float: left;
+    }
+
+    #inner2 {
+        float: left;
+        clear: left;
+    }
 </style>
 <link rel="stylesheet" type="text/css" href="{% static 'display/style.css' %}">
 
-{% if galleries_list %}
-    <ul>
-    {% for gallery in galleries_list %}
-    <!-- <li><a href={{ gallery.img_tag }}>{{ gallery.gallery_link }}</a></li> -->
-    <a href="{{ gallery.gallery_link }}"><img class="main-image" src="{{ gallery.img_tag }}"</img></a>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}
+<div id="wrapper">
+    <div id="inner1">
+        {% if page_obj %}
+        <!-- <ul> -->
+        {% for gallery in page_obj %}
+        <!-- <li><a href={{ gallery.img_tag }}>{{ gallery.gallery_link }}</a></li> -->
+        <a href="{{ gallery.gallery_link }}"><img class="main-image" src="{{ gallery.img_tag }}" </img></a>
+        {% endfor %}
+        <!-- </ul> -->
+        {% else %}
+        <p>No polls are available.</p>
+        {% endif %}
+    </div>
+    <div id="inner2" class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
