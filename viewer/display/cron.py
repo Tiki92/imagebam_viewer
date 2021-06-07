@@ -28,7 +28,7 @@ def link_checker():
     soup = soup.find_all(attrs={"class": "fas fa-ellipsis-h"})
 
     print("GETING IMAGE TAG")
-    image_tag = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"})
+    image_tag = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"}).get('src') 
     image_tag = str(image_tag)
 
     if len(soup) > 0:

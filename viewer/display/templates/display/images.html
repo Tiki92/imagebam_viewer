@@ -22,7 +22,7 @@
         {% if page_obj %}
         <!-- <ul> -->
         {% for image in page_obj %}
-        <a href="{{ image.link }}">{{ image.img_tag |safe }}</a>
+        <a href="{{ image.link }}"><img class="main-image" src="{{ image.img_tag }}"</img></a>
         {% endfor %}
         <!-- </ul> -->
         {% else %}

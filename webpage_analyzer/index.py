@@ -11,12 +11,11 @@ if status_req == 200:
     soup_tag = BeautifulSoup(resp.content, 'html.parser')
     soup = soup.body.div.main
     soup = soup.find_all(attrs={"class": "fas fa-ellipsis-h"})
-    print("TAGGGGG {}".format(soup_tag))
 
     print("GETING IMAGE TAG")
-    image_tag = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"})
-    print("IMAGE TAG {}".format(image_tag))
-    print("LINK {}".format(soup))
+    image_tag = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"}).get('src')   
+    image_tag = str(image_tag)
+    print("IMG TAG {}".format(image_tag))
 
     # soup = BeautifulSoup(resp.content, 'html.parser')
     # soup = soup.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"})

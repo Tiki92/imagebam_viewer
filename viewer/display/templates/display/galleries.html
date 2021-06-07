@@ -15,7 +15,7 @@
     <ul>
     {% for gallery in galleries_list %}
     <!-- <li><a href={{ gallery.img_tag }}>{{ gallery.gallery_link }}</a></li> -->
-    <a href="{{ gallery.gallery_link }}">{{ gallery.img_tag |safe }}</a>
+    <a href="{{ gallery.gallery_link }}"><img class="main-image" src="{{ gallery.img_tag }}"</img></a>
     {% endfor %}
     </ul>
 {% else %}
