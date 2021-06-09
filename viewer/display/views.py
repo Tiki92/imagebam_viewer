@@ -34,7 +34,7 @@ def galleries(request):
     # }
     # return HttpResponse(template.render(context, request))
 
-    galleries_list = Galleries.objects.order_by('-checked_date')
+    galleries_list = Galleries.objects.filter(status=200).order_by('-id')
     
 
     paginator = Paginator(galleries_list, 30)

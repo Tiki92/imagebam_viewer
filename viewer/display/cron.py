@@ -48,6 +48,7 @@ def link_checker():
             gal.gallery_link = gal_link
             gal.link = URL
             gal.img_tag = image_tag
+            gal.status = status_req
             gal.save()
 
             print("INCREMENT CURRENT PATTERN")
@@ -64,6 +65,7 @@ def link_checker():
         link = Links()
         link.link = URL
         link.img_tag = image_tag
+        link.status = status_req
         link.save()
 
         print("INCREMENT CURRENT PATTERN")
