@@ -26,10 +26,10 @@ class CurrentPattern(models.Model):
 
 
 class LastViewedImage(models.Model):
-    current = models.IntegerField()
+    current = models.IntegerField(default=1)
     page = models.IntegerField(default=1)
 
 
 class LastViewedGallerie(models.Model):
-    current = models.IntegerField()
+    current = models.IntegerField(default=1)
     page = models.IntegerField(default=1)
