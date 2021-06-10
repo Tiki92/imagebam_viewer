@@ -26,6 +26,7 @@
         {% for gallery in page_obj %}
         <!-- <li><a href={{ gallery.img_tag }}>{{ gallery.gallery_link }}</a></li> -->
         <a href="{{ gallery.gallery_link }}"><img alt="{{ gallery.id }}" class="main-image" src="{{ gallery.img_tag }}" </img></a>
+        <a href="{% url 'setlastgal' gallery.id %}">Set last img</a>
         {% endfor %}
         <!-- </ul> -->
         {% else %}
