@@ -13,28 +13,27 @@ def index(request):
 
 def images(request):
     images_list = Links.objects.order_by("id")
-    position = Links.objects.order_by("id").count()
-    last_img = LastViewedImage.objects.get(id=1).current
     last_img_page = LastViewedImage.objects.get(id=1).page
 
     paginator = Paginator(images_list, 30)
     page_number = request.GET.get("page")
-    last_img_seen = int(position / 30)
     page_obj = paginator.get_page(page_number)
 
     return render(
-        request, "display/images.html", {"page_obj": page_obj, "last_img": last_img, "last_img_page": last_img_page}
+        request, "display/images.html", {"page_obj": page_obj, "last_img_page": last_img_page}
     )
 
 
 def galleries(request):
     galleries_list = Galleries.objects.filter(status=200).order_by("id")
+    last_gal_page = LastViewedGallerie.objects.get(id=1).page
+
 
     paginator = Paginator(galleries_list, 30)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "display/galleries.html", {"page_obj": page_obj})
+    return render(request, "display/galleries.html", {"page_obj": page_obj, "last_gal_page": last_gal_page})
 
 
 def SetLastViewedImg(request, pk, page_nr):
@@ -42,8 +41,7 @@ def SetLastViewedImg(request, pk, page_nr):
     last.current = pk
     last.page = page_nr
     last.save()
-    return render(request, "display/last_set.html", {"pk": pk, "page_nr": page_nr, "type": "image"})
-    # return HttpResponse("Last Set id={} page={}".format(pk, page_nr))
+    return render(request, "display/last_set.html", {"pk": pk, "page_nr": page_nr, "type": "images"})
 
 
 def SetLastViewedGal(request, pk, page_nr):
@@ -51,7 +49,7 @@ def SetLastViewedGal(request, pk, page_nr):
     last.current = pk
     last.page = page_nr
     last.save()
-    return HttpResponse("Last Set")
+    return render(request, "display/last_set.html", {"pk": pk, "page_nr": page_nr, "type": "galleries"})
 
 
 def LastViewedImg(request):

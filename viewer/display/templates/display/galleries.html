@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<title>W3.CSS Template</title>
+<title>Galleries</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -53,7 +53,7 @@
                 &raquo;</a>
 
             {% endif %}
-            <a href="?page={{ last_img_page }}" class="w3-bar-item w3-button w3-hover-black">LAST CHECKED</a>
+            <a href="?page={{ last_gal_page }}" class="w3-bar-item w3-button w3-hover-black">LAST CHECKED</a>
         </div>
     </div>
 
@@ -69,7 +69,12 @@
             <div class="w3-third">
                 <img style="width:100%" onclick="onClick(this)" class="main-image" alt="{{ gallery.id }}"
                     src="{{ gallery.img_tag }}">
-                <a href="{% url 'setlastimg' gallery.id page_obj.number %}">Set last gallery</a>
+                <div style="display: inline-block;">
+                    <a href="{% url 'setlastgal' gallery.id page_obj.number %}">Set last gallery</a>
+                </div>
+                <div style="display: inline-block; margin-left: 200px;">
+                    <a target="_blank" href="{{ gallery.gallery_link }}">See Gallery</a>
+                </div>
             </div>
 
             {% endfor %}
@@ -96,7 +101,7 @@
                     &raquo;</a>
 
                 {% endif %}
-                <a href="?page={{ last_img_page }}" class="w3-bar-item w3-button w3-hover-black">LAST CHECKED</a>
+                <a href="?page={{ last_gal_page }}" class="w3-bar-item w3-button w3-hover-black">LAST CHECKED</a>
             </div>
         </div>
 
