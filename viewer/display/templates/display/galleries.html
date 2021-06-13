@@ -71,7 +71,7 @@
             <!-- <ul> -->
             {% for gallery in page_obj %}
             <div class="w3-third">
-                <img id="magic_{{ gallery.id }}" style="width:100%" onclick="onClick(this)" class="main-image" alt="{{ gallery.id }}"
+                <img id="magic_{{ gallery.id }}" style="width:100%" onclick="onClick(this)" class="main-image" alt="{{ gallery.name}}"
                     src="{{ gallery.img_tag }}">
                 <div style="display: inline-block;">
                     <a href="{% url 'setlastgal' gallery.id page_obj.number %}">Set last gallery</a>
@@ -97,7 +97,7 @@
                     class="w3-bar-item w3-button w3-hover-black">previous</a>
                 {% endif %}
 
-                <a href="#" class="w3-bar-item w3-black w3-button">{{ page_obj.number }}</a>
+                <a href="#" class="w3-bar-item w3-black w3-button">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
 
                 {% if page_obj.has_next %}
                 <a href="?page={{ page_obj.next_page_number }}" class="w3-bar-item w3-button w3-hover-black">next</a>

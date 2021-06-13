@@ -7,6 +7,7 @@ class Links(models.Model):
     checked_date = models.DateTimeField(editable=False, auto_now=True)
     img_tag = models.CharField(max_length=500, blank=True)
     status = models.IntegerField(default=200)
+    name = models.CharField(max_length=200, default="none")
 
 
 class Galleries(models.Model):
@@ -15,6 +16,7 @@ class Galleries(models.Model):
     checked_date = models.DateTimeField(editable=False, auto_now=True)
     img_tag = models.CharField(max_length=500, blank=True)
     status = models.IntegerField(default=200)
+    name = models.CharField(max_length=200, default="none")
 
 
 class Patterns(models.Model):

@@ -73,7 +73,7 @@
             {% for image in page_obj %}
             <div class="w3-third">
                 <img id="magic_{{ image.id }}" style="width:100%" onclick="onClick(this)" class="main-image"
-                    alt="{{ image.id }}" src="{{ image.img_tag }}">
+                    alt="{{ image.name }}" src="{{ image.img_tag }}">
                 <!-- <a href="{% url 'setlastimg' image.id page_obj.number %}">Set last img</a> -->
 
                 <div style="display: inline-block;">
@@ -100,7 +100,7 @@
                     class="w3-bar-item w3-button w3-hover-black">previous</a>
                 {% endif %}
 
-                <a href="#" class="w3-bar-item w3-black w3-button">{{ page_obj.number }}</a>
+                <a href="#" class="w3-bar-item w3-black w3-button">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
 
                 {% if page_obj.has_next %}
                 <a href="?page={{ page_obj.next_page_number }}" class="w3-bar-item w3-button w3-hover-black">next</a>

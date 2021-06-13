@@ -13,7 +13,7 @@ if status_req == 200:
     soup = soup.find_all(attrs={"class": "fas fa-ellipsis-h"})
 
     print("GETING IMAGE TAG")
-    image_tag = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"}).get('src')   
+    image_tag = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"}).get('alt')   
     image_tag = str(image_tag)
     print("IMG TAG {}".format(image_tag))
 

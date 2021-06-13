@@ -24,12 +24,17 @@ def link_checker():
     
     soup = BeautifulSoup(resp.content, 'html.parser')
     soup_tag = BeautifulSoup(resp.content, 'html.parser')
+    tag_alt = BeautifulSoup(resp.content, 'html.parser')
+
     soup = soup.body.div.main
     soup = soup.find_all(attrs={"class": "fas fa-ellipsis-h"})
 
     print("GETING IMAGE TAG")
     image_tag = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"}).get('src') 
     image_tag = str(image_tag)
+
+    tag_alt = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"}).get('alt')
+    tag_alt = str(tag_alt)
 
     if len(soup) > 0:
         soup = soup[0]
@@ -49,6 +54,7 @@ def link_checker():
             gal.link = URL
             gal.img_tag = image_tag
             gal.status = status_req
+            gal.name = tag_alt
             gal.save()
 
             print("INCREMENT CURRENT PATTERN")
@@ -66,6 +72,7 @@ def link_checker():
         link.link = URL
         link.img_tag = image_tag
         link.status = status_req
+        link.name = tag_alt
         link.save()
 
         print("INCREMENT CURRENT PATTERN")
