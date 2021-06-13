@@ -14,26 +14,27 @@ def index(request):
 def images(request):
     images_list = Links.objects.order_by("id")
     last_img_page = LastViewedImage.objects.get(id=1).page
+    last_img_id   = LastViewedImage.objects.get(id=1).current
 
     paginator = Paginator(images_list, 30)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
     return render(
-        request, "display/images.html", {"page_obj": page_obj, "last_img_page": last_img_page}
+        request, "display/images.html", {"page_obj": page_obj, "last_img_page": last_img_page, "last_img_id": last_img_id}
     )
 
 
 def galleries(request):
     galleries_list = Galleries.objects.filter(status=200).order_by("id")
     last_gal_page = LastViewedGallerie.objects.get(id=1).page
-
+    last_gal_id   = LastViewedGallerie.objects.get(id=1).current  
 
     paginator = Paginator(galleries_list, 30)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "display/galleries.html", {"page_obj": page_obj, "last_gal_page": last_gal_page})
+    return render(request, "display/galleries.html", {"page_obj": page_obj, "last_gal_page": last_gal_page, "last_gal_id": last_gal_id})
 
 
 def SetLastViewedImg(request, pk, page_nr):

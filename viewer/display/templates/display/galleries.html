@@ -32,6 +32,10 @@
         height: 300px;
         object-fit: cover;
     }
+
+    #magic_{{ last_gal_id }} {
+        border: solid red;
+    }
 </style>
 
 <body>
@@ -67,7 +71,7 @@
             <!-- <ul> -->
             {% for gallery in page_obj %}
             <div class="w3-third">
-                <img style="width:100%" onclick="onClick(this)" class="main-image" alt="{{ gallery.id }}"
+                <img id="magic_{{ gallery.id }}" style="width:100%" onclick="onClick(this)" class="main-image" alt="{{ gallery.id }}"
                     src="{{ gallery.img_tag }}">
                 <div style="display: inline-block;">
                     <a href="{% url 'setlastgal' gallery.id page_obj.number %}">Set last gallery</a>

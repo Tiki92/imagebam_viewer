@@ -18,11 +18,12 @@
     .w3-third img {
         margin-bottom: -6px;
         opacity: 0.8;
-        cursor: pointer
+        cursor: pointer;
+        /* border: 20px; */
     }
 
     .w3-third img:hover {
-        opacity: 1
+        opacity: 1;
     }
 
     img.main-image {
@@ -31,6 +32,10 @@
         width: 300px;
         height: 300px;
         object-fit: cover;
+    }
+
+    #magic_{{ last_img_id }} {
+        border: solid limegreen;
     }
 </style>
 
@@ -67,8 +72,8 @@
             <!-- <ul> -->
             {% for image in page_obj %}
             <div class="w3-third">
-                <img style="width:100%" onclick="onClick(this)" class="main-image" alt="{{ image.id }}"
-                    src="{{ image.img_tag }}">
+                <img id="magic_{{ image.id }}" style="width:100%" onclick="onClick(this)" class="main-image"
+                    alt="{{ image.id }}" src="{{ image.img_tag }}">
                 <!-- <a href="{% url 'setlastimg' image.id page_obj.number %}">Set last img</a> -->
 
                 <div style="display: inline-block;">
