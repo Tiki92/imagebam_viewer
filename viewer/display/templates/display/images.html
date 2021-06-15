@@ -50,7 +50,7 @@
                 class="w3-bar-item w3-button w3-hover-black">previous</a>
             {% endif %}
 
-            <a href="#" class="w3-bar-item w3-black w3-button">{{ page_obj.number }}</a>
+            <a href="#" class="w3-bar-item w3-black w3-button">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
 
             {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}" class="w3-bar-item w3-button w3-hover-black">next</a>
