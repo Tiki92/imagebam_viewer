@@ -12,9 +12,21 @@ def index(request):
 
 
 def images(request):
-    images_list = Links.objects.order_by("id")
-    last_img_page = LastViewedImage.objects.get(id=1).page
-    last_img_id   = LastViewedImage.objects.get(id=1).current
+    query = request.GET.get('search')
+    if query:
+          postresult = Links.objects.filter(name__icontains=query)
+          if postresult:
+              images_list = postresult
+              last_img_page = ""
+              last_img_id = ""
+          else:
+              images_list = postresult
+              last_img_page = ""
+              last_img_id = ""
+    else:
+        images_list = Links.objects.order_by("id")
+        last_img_page = LastViewedImage.objects.get(id=1).page
+        last_img_id   = LastViewedImage.objects.get(id=1).current
 
     paginator = Paginator(images_list, 30)
     page_number = request.GET.get("page")
@@ -26,9 +38,21 @@ def images(request):
 
 
 def galleries(request):
-    galleries_list = Galleries.objects.filter(status=200).order_by("id")
-    last_gal_page = LastViewedGallerie.objects.get(id=1).page
-    last_gal_id   = LastViewedGallerie.objects.get(id=1).current  
+    query = request.GET.get('search')
+    if query:
+        postresult = Galleries.objects.filter(name__icontains=query)
+        if postresult:
+            galleries_list = postresult
+            last_gal_page = ""
+            last_gal_id = ""
+        else:
+            galleries_list = postresult
+            last_gal_page = ""
+            last_gal_id = ""
+    else:
+        galleries_list = Galleries.objects.filter(status=200).order_by("id")
+        last_gal_page = LastViewedGallerie.objects.get(id=1).page
+        last_gal_id   = LastViewedGallerie.objects.get(id=1).current  
 
     paginator = Paginator(galleries_list, 30)
     page_number = request.GET.get("page")
