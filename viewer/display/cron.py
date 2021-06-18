@@ -41,6 +41,16 @@ def link_checker():
         gal_link = soup.find_previous("a")["href"]
         print("GALLERY LINK {}".format(gal_link))
 
+        resp_gal = req.get(gal_link)
+        status_req_gal = resp_gal.status_code
+        if status_req_gal == 200:
+
+          soup_gal_id = BeautifulSoup(resp_gal.content, 'html.parser')
+          gal_name = soup_gal_id.find("a", {"id": "gallery-name"}).getText()
+          print("GAL NAME {}".format(gal_name))
+        else:
+          gal_name = "none"
+
         print("Picture belongs to a Gallery {}".format(gal_link))
 
         print("CHECK IF GALLERY LINK ALREADY IN THE DB")
@@ -54,7 +64,7 @@ def link_checker():
             gal.link = URL
             gal.img_tag = image_tag
             gal.status = status_req
-            gal.name = tag_alt
+            gal.name = gal_name
             gal.save()
 
             print("INCREMENT CURRENT PATTERN")
