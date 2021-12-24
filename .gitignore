@@ -59,6 +59,7 @@ coverage.xml
 *.log
 local_settings.py
 db.sqlite3
+db.sqlite3_backup
 
 # Flask stuff:
 instance/
@@ -129,5 +130,5 @@ dmypy.json
 #Profile pictures folder
 .profile_image/
 
-webpage_analyzer/
+webpage_analyzer/*
 .idea/
