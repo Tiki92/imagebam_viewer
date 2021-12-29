@@ -76,6 +76,7 @@ def link_checker(pattern, resp, URL, current_pattern):
     # print("GETING IMAGE TAG")
     image_tag = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"}).get('src') 
     image_tag = str(image_tag)
+    print("IMAGE TAG: {}".format(image_tag))
 
     tag_alt = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"}).get('alt')
     tag_alt = str(tag_alt)

@@ -12,21 +12,9 @@ def index(request):
 
 
 def images(request):
-    query = request.GET.get('search')
-    if query:
-          postresult = Links.objects.filter(name__icontains=query)
-          if postresult:
-              images_list = postresult
-              last_img_page = ""
-              last_img_id = ""
-          else:
-              images_list = postresult
-              last_img_page = ""
-              last_img_id = ""
-    else:
-        images_list = Links.objects.order_by("id")
-        last_img_page = LastViewedImage.objects.get(id=1).page
-        last_img_id   = LastViewedImage.objects.get(id=1).current
+    images_list = Links.objects.order_by("id")
+    last_img_page = LastViewedImage.objects.get(id=1).page
+    last_img_id   = LastViewedImage.objects.get(id=1).current
 
     paginator = Paginator(images_list, 30)
     page_number = request.GET.get("page")
@@ -36,11 +24,39 @@ def images(request):
         request, "display/images.html", {"page_obj": page_obj, "last_img_page": last_img_page, "last_img_id": last_img_id}
     )
 
+def search_images(request):
+    query = request.GET.get('search')
+    by = request.GET.get('by')
+
+    if by == "Name":
+        postresult = Links.objects.filter(name__icontains=query).order_by('id')
+    elif by == "Tag":
+        postresult = Links.objects.filter(img_tag__icontains=query).order_by('id')
+    else:
+        postresult = Links.objects.all().order_by('id')
+
+    print("QUERY", query, "END QUERY", by)
+    if postresult:
+        images_list = postresult
+        last_img_page = ""
+        last_img_id = ""
+    else:
+        images_list = postresult
+        last_img_page = ""
+        last_img_id = ""
+    paginator = Paginator(images_list, 30)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request, "display/search_images.html", {"page_obj": page_obj, "last_img_page": last_img_page, "last_img_id": last_img_id, "q":query, "tag":by}
+    )
+
 
 def galleries(request):
     query = request.GET.get('search')
     if query:
-        postresult = Galleries.objects.filter(name__icontains=query)
+        postresult = Galleries.objects.filter(name__icontains=query).order_by('id')
         if postresult:
             galleries_list = postresult
             last_gal_page = ""
@@ -59,6 +75,32 @@ def galleries(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, "display/galleries.html", {"page_obj": page_obj, "last_gal_page": last_gal_page, "last_gal_id": last_gal_id})
+
+def search_galleries(request):
+    query = request.GET.get('search')
+    by = request.GET.get('by')
+
+    if by == "Name":
+        postresult = Galleries.objects.filter(name__icontains=query).order_by('id')
+    elif by == "Tag":
+        postresult = Galleries.objects.filter(img_tag__icontains=query).order_by('id')
+    else:
+        postresult = Galleries.objects.all().order_by('id')
+
+    if postresult:
+        galleries_list = postresult
+        last_gal_page = ""
+        last_gal_id = ""
+    else:
+        galleries_list = postresult
+        last_gal_page = ""
+        last_gal_id = ""
+
+    paginator = Paginator(galleries_list, 30)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "display/search_galleries.html", {"page_obj": page_obj, "last_gal_page": last_gal_page, "last_gal_id": last_gal_id, "q":query, "tag":by})
 
 
 def SetLastViewedImg(request, pk, page_nr):

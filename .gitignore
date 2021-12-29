@@ -60,6 +60,7 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3_backup
+db.sqlite3_new
 
 # Flask stuff:
 instance/
