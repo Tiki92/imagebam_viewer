@@ -1,3 +1,5 @@
+from json import dumps
+from datetime import datetime
 from .models import Links, Galleries, LastViewedGallerie, LastViewedImage
 from django.http import HttpResponse
 from django.template import loader
@@ -7,8 +9,26 @@ from django.shortcuts import redirect
 
 
 def index(request):
-    template = loader.get_template("display/index.html")
-    return render(request, "display/index.html")
+    images_list = list(Links.objects.values())
+    # print("TYPE:", type(images_list), "FORMAT:", images_list[1])
+
+    images_dates = Links.objects.dates("checked_date", "day").distinct()
+    oldest_date = Links.objects.dates("checked_date", "day").earliest("checked_date")
+    # print("IMAGE DATES:", oldest_date)
+    statistic_data = []
+
+    for img_date in images_dates:
+        start_date = datetime(year=img_date.year, month=img_date.month, day=img_date.day, hour=0, minute=0, second=0)
+        end_date = datetime(year=img_date.year, month=img_date.month, day=img_date.day, hour=23, minute=59, second=59)
+        image_date = str(img_date)
+        # print("DATA:", start_date, "END DATE:", end_date)
+        # count_dates = Links.objects.filter(date__range=["2011-01-01", "2011-01-31"])
+        count_dates = Links.objects.filter(checked_date__gte=start_date, checked_date__lte=end_date).count()
+        # print(img_date, "DATE_COUNT:", count_dates)
+        statistic_data.append({"date": image_date, "units": count_dates})
+    # print("OBJESCT", statistic_data)
+    statistic_data = dumps(statistic_data)
+    return render(request, "display/index.html", {"data": statistic_data})
 
 
 def images(request):
@@ -83,7 +103,7 @@ def search_galleries(request):
     if by == "Name":
         postresult = Galleries.objects.filter(name__icontains=query).order_by('id')
     elif by == "Tag":
-        postresult = Galleries.objects.filter(img_tag__icontains=query).order_by('id')
+        postresult = Galleries.objects.filter(gallery_link__icontains=query).order_by('id')
     else:
         postresult = Galleries.objects.all().order_by('id')
 

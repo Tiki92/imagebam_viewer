@@ -99,6 +99,7 @@ def link_checker(pattern, resp, URL, current_pattern):
         # print("Picture belongs to a Gallery {}".format(gal_link))
 
         # print("CHECK IF GALLERY LINK ALREADY IN THE DB")
+        print("GAL LINK", gal_link)
         existing = Galleries.objects.filter(gallery_link=gal_link).first()
         # print("EXISTING {}".format(existing))
         if existing == None:
