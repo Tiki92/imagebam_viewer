@@ -1,5 +1,5 @@
 from json import dumps
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from .models import Links, Galleries, LastViewedGallerie, LastViewedImage
 from django.http import HttpResponse
 from django.template import loader
@@ -9,35 +9,75 @@ from django.shortcuts import redirect
 
 
 def index(request):
-    images_list = list(Links.objects.values())
-    # print("TYPE:", type(images_list), "FORMAT:", images_list[1])
-
+    # IMAGE STATISTICS
     images_dates = Links.objects.dates("checked_date", "day").distinct()
-    oldest_date = Links.objects.dates("checked_date", "day").earliest("checked_date")
-    # print("IMAGE DATES:", oldest_date)
     statistic_data = []
+    all_images = Links.objects.all().count()
+    all_images = '{0:,}'.format(all_images)
 
     for img_date in images_dates:
         start_date = datetime(year=img_date.year, month=img_date.month, day=img_date.day, hour=0, minute=0, second=0)
         end_date = datetime(year=img_date.year, month=img_date.month, day=img_date.day, hour=23, minute=59, second=59)
         image_date = str(img_date)
-        # print("DATA:", start_date, "END DATE:", end_date)
-        # count_dates = Links.objects.filter(date__range=["2011-01-01", "2011-01-31"])
         count_dates = Links.objects.filter(checked_date__gte=start_date, checked_date__lte=end_date).count()
-        # print(img_date, "DATE_COUNT:", count_dates)
         statistic_data.append({"date": image_date, "units": count_dates})
-    # print("OBJESCT", statistic_data)
+    
+    # GALLERY STATISTIC
+    gal_dates = Galleries.objects.dates("checked_date", "day").distinct()
+    gal_statistic_data = []
+    all_galleries = Galleries.objects.all().count()
+    all_galleries = '{0:,}'.format(all_galleries)
+
+    for gal_date in gal_dates:
+        start_date = datetime(year=gal_date.year, month=gal_date.month, day=gal_date.day, hour=0, minute=0, second=0)
+        end_date = datetime(year=gal_date.year, month=gal_date.month, day=gal_date.day, hour=23, minute=59, second=59)
+        gallery_date = str(gal_date)
+        count_dates = Galleries.objects.filter(checked_date__gte=start_date, checked_date__lte=end_date).count()
+        gal_statistic_data.append({"date": gallery_date, "units": count_dates})
+
     statistic_data = dumps(statistic_data)
-    return render(request, "display/index.html", {"data": statistic_data})
+    gal_statistic_data = dumps(gal_statistic_data)
+
+    today = date.today()
+    yesterday = today - timedelta(days = 1)
+
+    today_start_date = datetime(year=today.year, month=today.month, day=today.day, hour=0, minute=0, second=0)
+    today_end_date = datetime(year=today.year, month=today.month, day=today.day, hour=23, minute=59, second=59)
+    today_images = Links.objects.filter(checked_date__gte=today_start_date, checked_date__lte=today_end_date).count()
+    today_galleries = Galleries.objects.filter(checked_date__gte=today_start_date, checked_date__lte=today_end_date).count()
+
+
+    yesterday_start_date = datetime(year=yesterday.year, month=yesterday.month, day=yesterday.day, hour=0, minute=0, second=0)
+    yesterday_end_date = datetime(year=yesterday.year, month=yesterday.month, day=yesterday.day, hour=23, minute=59, second=59)
+    yesterday_images = Links.objects.filter(checked_date__gte=yesterday_start_date, checked_date__lte=yesterday_end_date).count()
+    yesterday_galleries = Galleries.objects.filter(checked_date__gte=yesterday_start_date, checked_date__lte=yesterday_end_date).count()
+
+    
+    return render(request, "display/index.html", {
+        "data": statistic_data, 
+        "gal_data": gal_statistic_data,
+        "all_images": all_images,
+        "all_galleries": all_galleries,
+        "today_images": today_images,
+        "yesterday_images": yesterday_images,
+        "today_galleries": today_galleries,
+        "yesterday_galleries": yesterday_galleries
+        })
 
 
 def images(request):
+    goto = request.GET.get('gotopage')
+    print("GOTO:", goto)
     images_list = Links.objects.order_by("id")
     last_img_page = LastViewedImage.objects.get(id=1).page
     last_img_id   = LastViewedImage.objects.get(id=1).current
 
-    paginator = Paginator(images_list, 30)
-    page_number = request.GET.get("page")
+    if goto:
+        page_number=goto
+    else:
+        page_number = request.GET.get("page")
+
+    paginator = Paginator(images_list, 32)
     page_obj = paginator.get_page(page_number)
 
     return render(
@@ -51,7 +91,7 @@ def search_images(request):
     if by == "Name":
         postresult = Links.objects.filter(name__icontains=query).order_by('id')
     elif by == "Tag":
-        postresult = Links.objects.filter(img_tag__icontains=query).order_by('id')
+        postresult = Links.objects.filter(img_tag=query).order_by('id')
     else:
         postresult = Links.objects.all().order_by('id')
 
@@ -74,27 +114,48 @@ def search_images(request):
 
 
 def galleries(request):
-    query = request.GET.get('search')
-    if query:
-        postresult = Galleries.objects.filter(name__icontains=query).order_by('id')
-        if postresult:
-            galleries_list = postresult
-            last_gal_page = ""
-            last_gal_id = ""
-        else:
-            galleries_list = postresult
-            last_gal_page = ""
-            last_gal_id = ""
-    else:
-        galleries_list = Galleries.objects.filter(status=200).order_by("id")
-        last_gal_page = LastViewedGallerie.objects.get(id=1).page
-        last_gal_id   = LastViewedGallerie.objects.get(id=1).current  
+    goto = request.GET.get('gotopage')
+    print("GOTO:", goto)
+    galleries_list = Galleries.objects.order_by("id")
+    last_gal_page = LastViewedGallerie.objects.get(id=1).page
+    last_gal_id   = LastViewedGallerie.objects.get(id=1).current
+    print("SDASDASD", last_gal_id)
 
-    paginator = Paginator(galleries_list, 30)
-    page_number = request.GET.get("page")
+    if goto:
+        page_number=goto
+    else:
+        page_number = request.GET.get("page")
+
+    paginator = Paginator(galleries_list, 32)
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "display/galleries.html", {"page_obj": page_obj, "last_gal_page": last_gal_page, "last_gal_id": last_gal_id})
+    return render(
+        request, "display/galleries.html", {"page_obj": page_obj, "last_gal_page": last_gal_page, "last_gal_id": last_gal_id}
+    )
+
+
+
+    # query = request.GET.get('search')
+    # if query:
+    #     postresult = Galleries.objects.filter(name__icontains=query).order_by('id')
+    #     if postresult:
+    #         galleries_list = postresult
+    #         last_gal_page = ""
+    #         last_gal_id = ""
+    #     else:
+    #         galleries_list = postresult
+    #         last_gal_page = ""
+    #         last_gal_id = ""
+    # else:
+    #     galleries_list = Galleries.objects.filter(status=200).order_by("id")
+    #     last_gal_page = LastViewedGallerie.objects.get(id=1).page
+    #     last_gal_id   = LastViewedGallerie.objects.get(id=1).current  
+
+    # paginator = Paginator(galleries_list, 30)
+    # page_number = request.GET.get("page")
+    # page_obj = paginator.get_page(page_number)
+
+    # return render(request, "display/galleries.html", {"page_obj": page_obj, "last_gal_page": last_gal_page, "last_gal_id": last_gal_id})
 
 def search_galleries(request):
     query = request.GET.get('search')
@@ -103,7 +164,7 @@ def search_galleries(request):
     if by == "Name":
         postresult = Galleries.objects.filter(name__icontains=query).order_by('id')
     elif by == "Tag":
-        postresult = Galleries.objects.filter(gallery_link__icontains=query).order_by('id')
+        postresult = Galleries.objects.filter(gallery_link=query).order_by('id')
     else:
         postresult = Galleries.objects.all().order_by('id')
 

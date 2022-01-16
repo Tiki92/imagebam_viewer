@@ -1,5 +1,7 @@
 import json
 import time
+import socks
+import socket
 from django.utils import timezone
 import requests as req
 from bs4 import BeautifulSoup
@@ -8,38 +10,56 @@ from .models import Patterns, Links, Galleries, CurrentPattern
 from stem import Signal
 from stem.control import Controller
 
+controller = Controller.from_port(port=9051)
+
 def increment_pattern(current_pattern):
   current_pattern.current = current_pattern.current + 1
   current_pattern.save()
   current_pattern = CurrentPattern.objects.get(id=1)
   pattern = Patterns.objects.get(id=current_pattern.current).pattern
   print("INCRESED PATTERN:", pattern)
+  print("            ")
 
 
 def renew_tor_ip():
-  with Controller.from_port(port = 9051) as controller:
-      controller.authenticate(password="MyStr0n9P#D")
-      controller.signal(Signal.NEWNYM)
-      time.sleep(5)
+  controller.authenticate(password="MyStr0n9P#D")
+  controller.signal(Signal.NEWNYM)
+  # socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5 , "127.0.0.1", 9050, True)
+  # socket.socket = socks.socksocket
+  
+  time.sleep(10)
+  # with Controller.from_port(port = 9051) as controller:
+  #     controller.authenticate(password="MyStr0n9P#D")
+  #     controller.signal(Signal.NEWNYM)
+  #     time.sleep(5)
+
+def connectTor():
+    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5 , "127.0.0.1", 9050, True)
+    socket.socket = socks.socksocket
+
+connectTor()
+print("CONECTED TO TOR")
 
 def check_links():
   begin_time = datetime.now()
   current_pattern = CurrentPattern.objects.get(id=1)
   pattern = Patterns.objects.get(id=current_pattern.current).pattern
 
-  while pattern != "ZZZZZ9":
+  while pattern != "ZZZ9":
     time_now = timezone.localtime(timezone.now()).strftime("%d-%m-%Y %H:%M:%S")
-    URL = "https://www.imagebam.com/view/{}".format(pattern)
+    URL = "https://www.imagebam.com/view/AA{}".format(pattern)
     print("PATTERN NOW:", pattern)
 
     session = req.session()
+    
 
     # TO Request URL with SOCKS over TOR
-    session.proxies = {}
-    session.proxies['http']='socks5h://localhost:9050'
-    session.proxies['https']='socks5h://localhost:9050'
-    r = session.get('http://httpbin.org/ip')
-    print("IP:", r.text)
+    # session.proxies = {}
+    # session.proxies['http']='socks5h://localhost:9050'
+    # session.proxies['https']='socks5h://localhost:9050'
+    # r = session.get('http://httpbin.org/ip')
+    ip_address = req.get("https://api.ipify.org/?format=json").json()['ip']
+    print("IP:", ip_address)
 
     resp = session.get(URL)
     # print("CONTENT:", resp.content)
@@ -140,8 +160,8 @@ def link_checker(pattern, resp, URL, current_pattern):
           print("NEW IMG")
           increment_pattern(current_pattern)
         else:
-          increment_pattern(current_pattern)
           print("IMG IN DB")
+          increment_pattern(current_pattern)
 
         # current_pattern.current = current_pattern.current + 1
         # current_pattern.save()

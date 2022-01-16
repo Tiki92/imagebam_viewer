@@ -6,155 +6,196 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 <style>
-    body,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5 {
-        font-family: "Raleway", sans-serif
-    }
+    body{
+	margin:0;
+	padding:0;
+}
+/* .container{
+	width:90%
+	margin:10px auto;
+} */
+.portfolio-menu{
+	text-align:center;
+}
+.portfolio-menu ul li{
+	display:inline-block;
+	margin:0;
+	list-style:none;
+	padding:10px 15px;
+	cursor:pointer;
+	-webkit-transition:all 05s ease;
+	-moz-transition:all 05s ease;
+	-ms-transition:all 05s ease;
+	-o-transition:all 05s ease;
+	transition:all .5s ease;
+}
 
-    .w3-third img {
-        margin-bottom: -6px;
-        opacity: 0.8;
-        cursor: pointer
-    }
+.portfolio-item{
+	/*width:100%;*/
+}
+.portfolio-item .item{
+	width:303px;
+	float:left;
+	margin-bottom:10px;
+}
 
-    .w3-third img:hover {
-        opacity: 1
-    }
-
-    img.main-image {
-        /* max-width: 10% !important; */
-        /* float: left; */
-        width: 300px;
-        height: 300px;
+img.img-fluid {
+        width: 500px;
+        height: 500px;
         object-fit: cover;
     }
 
-    #magic_{{ last_gal_id }} {
-        border: solid red;
-    }
+#magic_{{ last_gal_id }} {
+    border: solid limegreen;
+}
 </style>
 
 <body>
 
     {% include "display/header.html" %}
-
     
-    <div style="margin-bottom: 55px">
-        <form class="form-inline my-2 my-lg-0" method="get" action="{%url 'search_galleries' %}">
+    <nav aria-label="...">
+        <ul class="pagination">
 
-            <button style="margin-right:10px" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" size="80" name="search">
-          <datalist id="suggestions">
-            <option value="Name"></option>
-            <option value="Tag"></option>
-        </datalist>
-        <input name="by"  autoComplete="on" list="suggestions"/> 
-        </form>
-      </div>
-
-    <!-- Pagination -->
-    <div class="w3-center w3-padding-32">
-        <div class="Row">
             {% if page_obj.has_previous %}
-            <div>
-            <a href="?page=1&search={{  q }}&by={{ tag }}" class="w3-bar-item w3-button w3-hover-black">&laquo; first</a>
-            </div>
-            <a href="?page={{ page_obj.previous_page_number }}&search={{  q }}&by={{ tag }}"
-                class="w3-bar-item w3-button w3-hover-black">previous</a>
+            <li class="page-item">
+                <a href="?page=1" class="page-link">&laquo; First</a>
+            </li>
+            <li class="page-item">
+            <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
+            </li>
             {% endif %}
 
-            <a href="#" class="w3-bar-item w3-black w3-button">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
+            <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
 
             {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}&search={{  q }}&by={{ tag }}" class="w3-bar-item w3-button w3-hover-black">next</a>
-            <div>
-            <a href="?page={{ page_obj.paginator.num_pages }}&search={{  q }}&by={{ tag }}" class="w3-bar-item w3-button w3-hover-black">last
-                &raquo;</a>
-            </div>
-
+            <li class="page-item">
+            <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
+            </li>
+            <li class="page-item">
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Last&raquo;</a>
+            </li>
             {% endif %}
-            <!-- <a href="?page={{ last_gal_page }}" class="w3-bar-item w3-button w3-hover-black">LAST CHECKED</a> -->
-        </div>
-    </div>
+            <li class="page-item">
+            <a href="?page={{ last_gal_page }}" class="page-link">LAST CHECKED</a>
+            </li>
+
+            <li class="page-item">
+                <form class="form-inline my-2 my-lg-0" method="get" action="{%url 'search_galleries' %}">
+                    <button style="margin-right:10px" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                  <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" size="80" name="search">
+                  <datalist id="suggestions">
+                    <option value="Name"></option>
+                    <option value="Tag"></option>
+                </datalist>
+                <input name="by"  autoComplete="on" list="suggestions"/> 
+                </form>
+            </li>
+
+        </ul>
+    </nav>
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.js"></script>
 
     <!-- !PAGE CONTENT! -->
-    <div class="w3-main">
+    <div class="container-fluid">
+        <div class="row">
+           <div class="col-lg-12 text-center my-2">
+              <h4>Images</h4>
+           </div>
+        </div>
+        <div class="portfolio-item row">
 
-        <!-- Photo grid -->
-        <div class="w3-row">
+           {% if page_obj %}
 
-            {% if page_obj %}
-            <!-- <ul> -->
-            {% for gallery in page_obj %}
-            <div class="w3-third">
-                <img id="magic_{{ gallery.id }}" style="width:100%" onclick="onClick(this)" class="main-image" alt="{{ gallery.name}}"
-                    src="{{ gallery.img_tag }}">
-                <div style="display: inline-block;">
-                    <a href="{% url 'setlastgal' gallery.id page_obj.number %}">Set last gallery</a>
-                </div>
-                <div style="display: inline-block; margin-left: 200px;">
-                    <a target="_blank" href="{{ gallery.gallery_link }}">See Gallery</a>
-                </div>
-            </div>
+           {% for gallery in page_obj %}
+           <div class="item selfie col-lg-3 col-md-4 col-6 col-sm">
+               <a href="{{ gallery.img_tag }}" class="fancylight popup-btn" data-fancybox-group="light" title="{{ gallery.name }}">
+               <img id="magic_{{ gallery.id }}" class="img-fluid" src="{{ gallery.img_tag }}" alt="{{ gallery.name }}">
 
-            {% endfor %}
-            {% else %}
-            <p>No polls are available.</p>
-            {% endif %}
+               <div style="display: inline-block;">
+                   <a type="button" class="btn btn-success" href="{% url 'setlastgal' gallery.id page_obj.number %}">Set last gallery</a>
+               </div>
+               <div style="display: inline-block; margin-left: 200px;">
+                   <a type="button" class="btn btn-primary" target="_blank" href="{{ gallery.gallery_link }}">See Original</a>
+               </div>
+           </div>
+
+           {% endfor %}
+           {% else %}
+           <p>No polls are available.</p>
+           {% endif %}
 
         </div>
+     </div>
 
         <!-- Pagination -->
-    <div class="w3-center w3-padding-32">
-        <div class="Row">
-            {% if page_obj.has_previous %}
-            <div>
-            <a href="?page=1&search={{  q }}&by={{ tag }}" class="w3-bar-item w3-button w3-hover-black">&laquo; first</a>
-            </div>
-            <a href="?page={{ page_obj.previous_page_number }}&search={{  q }}&by={{ tag }}"
-                class="w3-bar-item w3-button w3-hover-black">previous</a>
-            {% endif %}
+        <nav aria-label="...">
+            <ul class="pagination">
+    
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a href="?page=1" class="page-link">&laquo; First</a>
+                </li>
+                <li class="page-item">
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
+                </li>
+                {% endif %}
+    
+                <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+    
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
+                </li>
+                <li class="page-item">
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Last&raquo;</a>
+                </li>
+                {% endif %}
+                <li class="page-item">
+                <a href="?page={{ last_gal_page }}" class="page-link">LAST CHECKED</a>
+                </li>
+    
+                <li class="page-item">
+                <form class="form-inline my-2 my-lg-0" method="get" action="{%url 'galleries' %}">
+                    <input class="form-control mr-sm-2" type="search" placeholder="gotopage" aria-label="GoToPage" size="5" name="gotopage">
+                    <button style="margin-right:10px" class="btn btn-outline-success my-2 my-sm-0" type="submit">Go</button>
+                </form>
+                </li>
+    
+                <li class="page-item">
+                    <form class="form-inline my-2 my-lg-0" method="get" action="{%url 'search_galleries' %}">
+                        <button style="margin-right:10px" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" size="80" name="search">
+                      <datalist id="suggestions">
+                        <option value="Name"></option>
+                        <option value="Tag"></option>
+                    </datalist>
+                    <input name="by"  autoComplete="on" list="suggestions"/> 
+                    </form>
+                </li>
+    
+            </ul>
+        </nav>
 
-            <a href="#" class="w3-bar-item w3-black w3-button">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
-
-            {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}&search={{  q }}&by={{ tag }}" class="w3-bar-item w3-button w3-hover-black">next</a>
-            <div>
-            <a href="?page={{ page_obj.paginator.num_pages }}&search={{  q }}&by={{ tag }}" class="w3-bar-item w3-button w3-hover-black">last
-                &raquo;</a>
-            </div>
-
-            {% endif %}
-            <!-- <a href="?page={{ last_gal_page }}" class="w3-bar-item w3-button w3-hover-black">LAST CHECKED</a> -->
-        </div>
-    </div>
-
-        <!-- Modal for full size images on click-->
-        <div id="modal01" class="w3-modal w3-black" style="padding-top:0" onclick="this.style.display='none'">
-            <span class="w3-button w3-black w3-xlarge w3-display-topright">×</span>
-            <div class="w3-modal-content w3-animate-zoom w3-center w3-transparent w3-padding-64">
-                <img id="img01" class="w3-image">
-                <p id="caption"></p>
-            </div>
-        </div>
-
-        <!-- End page content -->
-    </div>
-
-    <script>
-        // Modal Image Gallery
-        function onClick(element) {
-            document.getElementById("img01").src = element.src;
-            document.getElementById("modal01").style.display = "block";
-            var captionText = document.getElementById("caption");
-            captionText.innerHTML = element.alt;
-        }
-
-    </script>
+        <script>
+            $(document).ready(function() {
+            var popup_btn = $('.popup-btn');
+            popup_btn.magnificPopup({
+            type : 'image',
+            gallery : {
+                enabled : true
+            }
+            });
+            });
+       </script>
 </body>
 
 </html>
