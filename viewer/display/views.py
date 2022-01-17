@@ -58,10 +58,10 @@ def index(request):
         "gal_data": gal_statistic_data,
         "all_images": all_images,
         "all_galleries": all_galleries,
-        "today_images": today_images,
-        "yesterday_images": yesterday_images,
-        "today_galleries": today_galleries,
-        "yesterday_galleries": yesterday_galleries
+        "today_images": '{0:,}'.format(today_images),
+        "yesterday_images": '{0:,}'.format(yesterday_images),
+        "today_galleries": '{0:,}'.format(today_galleries),
+        "yesterday_galleries": '{0:,}'.format(yesterday_galleries)
         })
 
 
@@ -132,30 +132,6 @@ def galleries(request):
     return render(
         request, "display/galleries.html", {"page_obj": page_obj, "last_gal_page": last_gal_page, "last_gal_id": last_gal_id}
     )
-
-
-
-    # query = request.GET.get('search')
-    # if query:
-    #     postresult = Galleries.objects.filter(name__icontains=query).order_by('id')
-    #     if postresult:
-    #         galleries_list = postresult
-    #         last_gal_page = ""
-    #         last_gal_id = ""
-    #     else:
-    #         galleries_list = postresult
-    #         last_gal_page = ""
-    #         last_gal_id = ""
-    # else:
-    #     galleries_list = Galleries.objects.filter(status=200).order_by("id")
-    #     last_gal_page = LastViewedGallerie.objects.get(id=1).page
-    #     last_gal_id   = LastViewedGallerie.objects.get(id=1).current  
-
-    # paginator = Paginator(galleries_list, 30)
-    # page_number = request.GET.get("page")
-    # page_obj = paginator.get_page(page_number)
-
-    # return render(request, "display/galleries.html", {"page_obj": page_obj, "last_gal_page": last_gal_page, "last_gal_id": last_gal_id})
 
 def search_galleries(request):
     query = request.GET.get('search')
