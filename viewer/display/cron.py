@@ -45,7 +45,7 @@ def check_links():
   current_pattern = CurrentPattern.objects.get(id=1)
   pattern = Patterns.objects.get(id=current_pattern.current).pattern
 
-  while pattern != "ZZZ9":
+  while pattern != "ZZZZ":
     time_now = timezone.localtime(timezone.now()).strftime("%d-%m-%Y %H:%M:%S")
     URL = "https://www.imagebam.com/view/AA{}".format(pattern)
     print("PATTERN NOW:", pattern)
