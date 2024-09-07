@@ -7,10 +7,57 @@ import requests as req
 from bs4 import BeautifulSoup
 from datetime import date, datetime
 from .models import Patterns, Links, Galleries, CurrentPattern
-from stem import Signal
-from stem.control import Controller
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.proxy import Proxy, ProxyType
+from selenium.common.exceptions import NoSuchElementException
 
-controller = Controller.from_port(port=9051)
+def getPageContent(URL): 
+    # Configure the proxy settings for Tor
+    proxy = Proxy()
+    proxy.proxy_type = ProxyType.MANUAL
+    proxy.socks_proxy = 'localhost:9050'
+    proxy.socks_version = 5
+
+    capabilities = webdriver.DesiredCapabilities.FIREFOX.copy()
+    capabilities.update(proxy.to_capabilities())
+
+    # Setup Firefox options
+    firefox_options = Options()
+    firefox_options.add_argument('--headless')   # Optional: Run in headless mode
+    firefox_options.proxy = proxy
+
+    # Path to GeckoDriver
+    gecko_driver_path = '/usr/local/bin/geckodriver'  # Update with your path
+    service = Service(gecko_driver_path)
+
+    # Initialize the WebDriver for Firefox
+    driver = webdriver.Firefox(service=service, options=firefox_options)
+
+    try:
+        # Navigate to the page
+        driver.get(URL)
+
+        try:
+            continue_button = driver.find_element(By.XPATH, '//a[contains(text(), "Continue to your image")]')
+            continue_button.click()
+            print("Button clicked.")
+        except NoSuchElementException:
+            print("Button not found.")
+
+        # Get the final page source
+        page_source = driver.page_source
+
+        # Save or print the page source
+        with open('imagebam_page.html', 'w', encoding='utf-8') as file:
+            file.write(page_source)
+
+    finally:
+        driver.quit()
+        return page_source
 
 def increment_pattern(current_pattern):
   current_pattern.current = current_pattern.current + 1
@@ -20,25 +67,6 @@ def increment_pattern(current_pattern):
   print("INCRESED PATTERN:", pattern)
   print("            ")
 
-
-def renew_tor_ip():
-  controller.authenticate(password="MyStr0n9P#D")
-  controller.signal(Signal.NEWNYM)
-  # socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5 , "127.0.0.1", 9050, True)
-  # socket.socket = socks.socksocket
-  
-  time.sleep(10)
-  # with Controller.from_port(port = 9051) as controller:
-  #     controller.authenticate(password="MyStr0n9P#D")
-  #     controller.signal(Signal.NEWNYM)
-  #     time.sleep(5)
-
-def connectTor():
-    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5 , "127.0.0.1", 9050, True)
-    socket.socket = socks.socksocket
-
-connectTor()
-print("CONECTED TO TOR")
 
 def check_links():
   begin_time = datetime.now()
@@ -50,46 +78,37 @@ def check_links():
     URL = "https://www.imagebam.com/view/AA{}".format(pattern)
     print("PATTERN NOW:", pattern)
 
-    session = req.session()
-    
-
-    # TO Request URL with SOCKS over TOR
-    # session.proxies = {}
-    # session.proxies['http']='socks5h://localhost:9050'
-    # session.proxies['https']='socks5h://localhost:9050'
-    # r = session.get('http://httpbin.org/ip')
     ip_address = req.get("https://api.ipify.org/?format=json").json()['ip']
     print("IP:", ip_address)
 
-    resp = session.get(URL)
-    # print("CONTENT:", resp.content)
-
-    link_checker(pattern, resp, URL, current_pattern)
+    link_checker(pattern, URL, current_pattern)
 
     current_pattern = CurrentPattern.objects.get(id=1)
     pattern = Patterns.objects.get(id=current_pattern.current).pattern
 
     # print("                   ")
     print("TIME {}".format(time_now))
-  print("DURATION OF EXECUTION:", datetime.now() - begin_time)
+    print("DURATION OF EXECUTION:", datetime.now() - begin_time)
     # print("URL {}".format(URL))
 
-def link_checker(pattern, resp, URL, current_pattern):
-  status_req = resp.status_code
+def link_checker(pattern, URL, current_pattern):
+  status_req = req.get(URL).status_code
   # print("REQUEST STATUS {}".format(status_req))
 
   if status_req == 200:
+    resp = getPageContent(URL)
+
+    soup = BeautifulSoup(resp, 'html.parser')
+    soup_tag = BeautifulSoup(resp, 'html.parser')
+    soup_gal_id = BeautifulSoup(resp, 'html.parser')
+    links = soup_gal_id.find_all("a", class_="text-decoration-none")
+    gal_link = "https://www.example.com/nonexistentpage12345"
+    for link in links:
+        href = link.get('href')
+        if href and 'GA' in href:
+            gal_link = link.get("href")
+            break
     
-    soup = BeautifulSoup(resp.content, 'html.parser')
-    soup_tag = BeautifulSoup(resp.content, 'html.parser')
-    tag_alt = BeautifulSoup(resp.content, 'html.parser')
-    banned_ip = soup_tag.body.main.div.find("div", {"class": "message"}) # .p.contents (get the specific content of the mesasge)
-
-    if banned_ip != None:
-      print("BANNED IP:", banned_ip)
-      renew_tor_ip()
-      check_links()
-
     soup = soup.body.div.main
     soup = soup.find_all(attrs={"class": "fas fa-ellipsis-h"})
 
@@ -97,24 +116,24 @@ def link_checker(pattern, resp, URL, current_pattern):
     image_tag = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"}).get('src') 
     image_tag = str(image_tag)
     print("IMAGE TAG: {}".format(image_tag))
+    # print("SOUPPPP", len(soup), soup, soup_tag)
 
     tag_alt = soup_tag.body.div.main.find("div", {"class": "view-image"}).a.find("img",{"class": "main-image"}).get('alt')
     tag_alt = str(tag_alt)
 
-    if len(soup) > 0:
-        soup = soup[0]
-        gal_link = soup.find_previous("a")["href"]
-        # print("GALLERY LINK {}".format(gal_link))
+    if gal_link != "https://www.example.com/nonexistentpage12345":
+        # links = soup_gal_id.find_all("a", class_="text-decoration-none")
+        print("GALLERY LINK {}".format(gal_link))
 
         resp_gal = req.get(gal_link)
         status_req_gal = resp_gal.status_code
         if status_req_gal == 200:
+          if image_tag:
+            gal_name = tag_alt
 
-          soup_gal_id = BeautifulSoup(resp_gal.content, 'html.parser')
-          gal_name = soup_gal_id.find("a", {"id": "gallery-name"}).getText()
-          # print("GAL NAME {}".format(gal_name))
-        else:
-          gal_name = "none"
+            print("GAL NAME {}".format(gal_name))
+          else:
+           gal_name = "none"
 
         # print("Picture belongs to a Gallery {}".format(gal_link))
 
