@@ -54,7 +54,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'viewer.urls'
 
 CRONJOBS = [
-    ('@reboot', 'display.cron.check_links', '>> /tmp/check_link.log')
+    ('@reboot', 'display.cron.check_links', '>> /tmp/check_link.log 2>&1')
 ]
 
 # CRONTAB_COMMAND_SUFFIX = '2>&1'
